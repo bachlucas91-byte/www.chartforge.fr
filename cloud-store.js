@@ -158,11 +158,20 @@
     const byId = new Map((profiles || []).map(row=>[row.id,mapProfile(row)]));
     return ids.map(id=>byId.get(id)).filter(Boolean);
   }
+  async function ensureProfile(config, session, userId, profile={}) {
+    if (!uuidLike(userId)) throw new Error('Your account is not ready yet. Sign out and sign in again.');
+    const existing = await request(config,session,'profiles',{query:{select:'id',id:`eq.${userId}`,limit:'1'}});
+    if (existing?.[0]) return existing[0];
+    const rawBase = String(profile.handle || profile.email?.split('@')[0] || 'creator').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/^_+|_+$/g,'') || 'creator';
+    const username = `${rawBase.slice(0,21)}_${String(userId).replace(/-/g,'').slice(0,8)}`.slice(0,30);
+    const rows = await request(config,session,'profiles',{method:'POST',query:{select:'id'},body:{id:userId,username,display_name:String(profile.name || 'ChartForge creator').slice(0,60)},prefer:'return=representation'});
+    return rows?.[0] || {id:userId};
+  }
   async function setFollow(config, session, followerId, followedId, following) {
     if (!uuidLike(followerId) || !uuidLike(followedId) || followerId === followedId) throw new Error('Choose another public creator to follow.');
     if (following) await request(config,session,'follows',{method:'POST',body:{follower_id:followerId,followed_id:followedId},prefer:'return=minimal'});
     else await request(config,session,'follows',{method:'DELETE',query:{follower_id:`eq.${followerId}`,followed_id:`eq.${followedId}`},prefer:'return=minimal'});
   }
 
-  window.ChartForgeCloud = { listPublic, listOwned, listLikes, saveProject, deleteProject, setLiked, recordView, updateProfile, getProfile, listProfiles, getFollowSummary, listFollowProfiles, setFollow };
+  window.ChartForgeCloud = { listPublic, listOwned, listLikes, saveProject, deleteProject, setLiked, recordView, updateProfile, getProfile, listProfiles, getFollowSummary, listFollowProfiles, setFollow, ensureProfile };
 })();
