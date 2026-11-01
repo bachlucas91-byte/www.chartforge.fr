@@ -78,3 +78,5 @@
 @media(max-width:540px){.creator-card{gap:8px;padding:11px}.creator-card>.button{padding:0 7px}.profile-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.profile-head{align-items:center}.profile-actions{padding-bottom:0}}
 
 .field-search svg{width:14px;height:14px;flex:none}.profile-stat-button{display:block;text-align:left}
+
+.creator-metrics{margin-top:6px;color:#536c40;font:10px var(--mono)}
