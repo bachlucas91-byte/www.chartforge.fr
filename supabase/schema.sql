@@ -289,6 +289,7 @@ grant select, insert, update, delete on public.projects, public.datasets to auth
 grant select, insert, delete on public.project_likes to authenticated;
 grant select, insert on public.project_views to authenticated;
 grant select, insert, update on public.reports to authenticated;
+grant select on public.follows to anon;
 grant select, insert, delete on public.follows to authenticated;
 grant select, insert, update, delete on public.categories to authenticated;
 grant usage, select on sequence public.project_views_id_seq to anon, authenticated;
