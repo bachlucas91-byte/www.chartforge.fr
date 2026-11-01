@@ -101,7 +101,7 @@
     let projects=activeProjects().filter(x=>x.ownerId===profile.id&&sharedPublic(x));
     if(state.query)projects=projects.filter(x=>x.title.toLowerCase().includes(state.query.toLowerCase()));
     const views=projects.reduce((sum,x)=>sum+x.views,0),likes=projects.reduce((sum,x)=>sum+x.likes,0),showFollowStats=profile.id!=='local-user';
-    const stat=(label,count,direction)=>showFollowStats?'<button class=profile-stat profile-stat-button data-action=open-follow-list data-direction='+direction+' data-user-id='+esc(profile.id)+'><strong>'+formatNum(count)+'</strong><span>'+label+'</span></button>':'<div class=profile-stat><strong>'+formatNum(count)+'</strong><span>'+label+'</span></div>';
+    const stat=(label,count,direction)=>showFollowStats?'<button class=profile-stat-button data-action=open-follow-list data-direction='+direction+' data-user-id='+esc(profile.id)+'><strong>'+formatNum(count)+'</strong><span>'+label+'</span></button>':'<div class=profile-stat><strong>'+formatNum(count)+'</strong><span>'+label+'</span></div>';
     const followButton=isSelf?'':'<button class="button '+(profile.isFollowing?'button-soft':'button-primary')+' button-small" data-action=toggle-follow data-id='+esc(profile.id)+'>'+(profile.isFollowing?'Following':'Follow')+'</button>';
     const editButton=isSelf?'<button class="button button-soft button-small" data-action=edit-profile>'+svgIcon('edit')+' Edit profile</button>':followButton;
     const joined=profile.joinedAt?' · Joined '+new Date(profile.joinedAt).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'';
@@ -205,7 +205,7 @@
       db.projects=[...local,...byId.values()];
       const localIds=new Set(local.map(project=>project.id));
       db.liked=[...new Set([...db.liked.filter(id=>localIds.has(id)),...likes])];
-      persist();render();
+      persist();render();if(state.page==='profile'&&state.profileUserId&&state.profileUserId!=='local-user')loadProfilePage(state.profileUserId,state.profileRequest);
     }catch(error){if(!quiet)toast(error.message||'Could not sync your private projects.',true)}
   }
   async function saveCloudProject(project,{publish=false}={}){
