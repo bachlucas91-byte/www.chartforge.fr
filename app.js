@@ -6,6 +6,7 @@
   const AUTH_SESSION_STORE = 'chartforge.auth-session.v1';
   const AUTH_PKCE_STORE = 'chartforge.auth-pkce.v1';
   const SUPABASE_PROJECT_URL = 'https://btkxgzzuitnwpyyqqrxg.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_YFVaH2Rhv5OzLTWnhB9qNw_AQnjkDBk';
   const GOOGLE_SUPABASE_CALLBACK = `${SUPABASE_PROJECT_URL}/auth/v1/callback`;
   const COLORS = ['#9cca67','#e78b70','#7c9ed0','#e9c65f','#ad9bd8','#62b8a6','#dd79a7','#8a9c88','#d99e58','#83bad2'];
   const $ = (selector, root=document) => root.querySelector(selector);
@@ -20,9 +21,12 @@
   function loadStore(){try{const raw=localStorage.getItem(STORE);if(!raw)return initial();const parsed=JSON.parse(raw);if(!parsed.projects||!parsed.profile)return initial();const defaults=initial();const projects=parsed.projects.filter(p=>p&&p.isExample!==true).map(({isExample,...p})=>p);const wasSeedProfile=parsed.profile.handle==='mirachen'&&parsed.profile.name==='Mira Chen';const profile=wasSeedProfile?defaults.profile:parsed.profile;const cleanedProjects=wasSeedProfile?projects.map(p=>({...p,ownerName:p.ownerName==='Mira Chen'?profile.name:p.ownerName})):projects;const ids=new Set(cleanedProjects.map(p=>p.id));const next={...defaults,...parsed,profile,projects:cleanedProjects,liked:(parsed.liked||[]).filter(id=>ids.has(id)),follows:parsed.follows||[],reports:(parsed.reports||[]).filter(r=>ids.has(r.projectId))};localStorage.setItem(STORE,JSON.stringify(next));return next}catch{return initial()}}
   let db=loadStore();
   function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'null')||fallback}catch{return fallback}}
-  let authConfig=readJSON(AUTH_CONFIG_STORE,{url:'',key:''});
+  let authConfig=readJSON(AUTH_CONFIG_STORE,{url:SUPABASE_PROJECT_URL,key:SUPABASE_PUBLISHABLE_KEY});
+  if(!authConfig.url)authConfig.url=SUPABASE_PROJECT_URL;
+  if(!authConfig.key)authConfig.key=SUPABASE_PUBLISHABLE_KEY;
+  try{localStorage.setItem(AUTH_CONFIG_STORE,JSON.stringify(authConfig))}catch{}
   if(typeof authConfig.url==='string'&&authConfig.url.replace(/\/+$/,'')===GOOGLE_SUPABASE_CALLBACK){authConfig.url=SUPABASE_PROJECT_URL;try{localStorage.setItem(AUTH_CONFIG_STORE,JSON.stringify(authConfig))}catch{}}
-  if(authConfig.key&&!['Publishable key','legacy anon key'].includes(supabaseKeyType(authConfig.key))){authConfig.key='';try{localStorage.setItem(AUTH_CONFIG_STORE,JSON.stringify(authConfig))}catch{}}
+  if(authConfig.key&&!['Publishable key','legacy anon key'].includes(supabaseKeyType(authConfig.key))){authConfig.key=SUPABASE_PUBLISHABLE_KEY;try{localStorage.setItem(AUTH_CONFIG_STORE,JSON.stringify(authConfig))}catch{}}
   let authSession=readJSON(AUTH_SESSION_STORE,null);
   let authUser=null;
   let authGeneration=0;
