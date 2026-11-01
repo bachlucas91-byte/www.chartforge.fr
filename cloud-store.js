@@ -130,5 +130,39 @@
     await request(config,session,'profiles',{method:'PATCH',query:{id:`eq.${userId}`},body:{display_name:profile.name,username:profile.handle,bio:profile.bio||''},prefer:'return=minimal'});
   }
 
-  window.ChartForgeCloud = { listPublic, listOwned, listLikes, saveProject, deleteProject, setLiked, recordView, updateProfile };
+  function mapProfile(row) {
+    return {id:row.id,handle:row.username || 'creator',name:row.display_name || row.username || 'Chart creator',bio:row.bio || '',joinedAt:row.created_at || null};
+  }
+  async function getProfile(config, session, userId) {
+    const rows = await request(config,session,'profiles',{query:{select:'id,username,display_name,bio,created_at',id:`eq.${userId}`,limit:'1'}});
+    return rows?.[0] ? mapProfile(rows[0]) : null;
+  }
+  async function listProfiles(config, session) {
+    const rows = await request(config,session,'profiles',{query:{select:'id,username,display_name,bio,created_at',order:'display_name.asc,username.asc',limit:'500'}});
+    return (rows || []).map(mapProfile);
+  }
+  async function getFollowSummary(config, session, userId, currentUserId=null) {
+    const [followers,following,mine] = await Promise.all([
+      request(config,session,'follows',{query:{select:'follower_id',followed_id:`eq.${userId}`,limit:'5000'}}),
+      request(config,session,'follows',{query:{select:'followed_id',follower_id:`eq.${userId}`,limit:'5000'}}),
+      currentUserId && currentUserId!==userId ? request(config,session,'follows',{query:{select:'follower_id',follower_id:`eq.${currentUserId}`,followed_id:`eq.${userId}`,limit:'1'}}) : Promise.resolve([])
+    ]);
+    return {followerCount:(followers||[]).length,followingCount:(following||[]).length,isFollowing:Boolean(mine?.length)};
+  }
+  async function listFollowProfiles(config, session, userId, direction) {
+    const followers = direction === 'followers';
+    const rows = await request(config,session,'follows',{query:{select:followers?'follower_id':'followed_id',[followers?'followed_id':'follower_id']:`eq.${userId}`,order:'created_at.desc',limit:'1000'}});
+    const ids = (rows || []).map(row=>followers?row.follower_id:row.followed_id).filter(uuidLike);
+    if (!ids.length) return [];
+    const profiles = await request(config,session,'profiles',{query:{select:'id,username,display_name,bio,created_at',id:`in.(${ids.join(',')})`,limit:String(ids.length)}});
+    const byId = new Map((profiles || []).map(row=>[row.id,mapProfile(row)]));
+    return ids.map(id=>byId.get(id)).filter(Boolean);
+  }
+  async function setFollow(config, session, followerId, followedId, following) {
+    if (!uuidLike(followerId) || !uuidLike(followedId) || followerId === followedId) throw new Error('Choose another public creator to follow.');
+    if (following) await request(config,session,'follows',{method:'POST',body:{follower_id:followerId,followed_id:followedId},prefer:'return=minimal'});
+    else await request(config,session,'follows',{method:'DELETE',query:{follower_id:`eq.${followerId}`,followed_id:`eq.${followedId}`},prefer:'return=minimal'});
+  }
+
+  window.ChartForgeCloud = { listPublic, listOwned, listLikes, saveProject, deleteProject, setLiked, recordView, updateProfile, getProfile, listProfiles, getFollowSummary, listFollowProfiles, setFollow };
 })();
