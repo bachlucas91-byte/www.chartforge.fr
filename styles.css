@@ -48,3 +48,31 @@
 .auth-divider:before,.auth-divider:after{content:"";height:1px;background:#eceee8;flex:1}
 .auth-callback-code{display:block;padding:8px 9px;border-radius:7px;background:#fff;border:1px solid #e5e9df;color:#465d39;font-size:10px;overflow-wrap:anywhere}
 .auth-copy-callback{margin-top:8px}
+
+.author-mini{min-width:0;flex-wrap:wrap}
+.author-profile-link{border:0;padding:2px 4px;background:transparent;color:#4d6d38;font-size:10px;font-weight:700;white-space:nowrap}
+.author-profile-link:hover{text-decoration:underline}
+.profile-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:9px}
+.profile-stat{min-width:0;text-align:left}
+.profile-stat-button{border:0;padding:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.profile-stat-button:hover strong{color:#4d6d38;text-decoration:underline}
+.profile-stat-button:focus-visible,.author-profile-link:focus-visible{outline:2px solid #8db75c;outline-offset:3px;border-radius:4px}
+.creator-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.creator-card{display:flex;align-items:center;gap:12px;min-width:0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:14px}
+.creator-avatar{width:42px;height:42px;flex:none;border-radius:14px;background:#e4edd9;color:#4c6339;display:grid;place-items:center;font:800 13px var(--display)}
+.creator-details{min-width:0;flex:1}
+.creator-details strong,.creator-details span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.creator-details strong{font-size:12px}
+.creator-details span,.follow-person span{color:#8b9186;font-size:10px;margin-top:3px}
+.creator-details p{margin:6px 0 0;color:#777e72;font-size:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.follow-list-content{max-height:min(60vh,470px);overflow:auto}
+.follow-list{display:grid;gap:8px}
+.follow-row{display:flex;align-items:center;gap:11px;padding:9px;border:1px solid #edf0e9;border-radius:11px}
+.follow-row .creator-avatar{width:36px;height:36px;border-radius:12px;font-size:11px}
+.follow-person{min-width:0;flex:1}
+.follow-person strong,.follow-person span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.follow-person strong{font-size:11px}
+.follow-empty{padding:22px 10px}
+.profile-stories-head{padding:23px 0 15px;border:0}
+@media(max-width:760px){.creator-grid{grid-template-columns:1fr}}
+@media(max-width:540px){.creator-card{gap:8px;padding:11px}.creator-card>.button{padding:0 7px}.profile-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.profile-head{align-items:center}.profile-actions{padding-bottom:0}}
