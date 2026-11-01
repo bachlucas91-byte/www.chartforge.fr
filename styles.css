@@ -80,3 +80,18 @@
 .field-search svg{width:14px;height:14px;flex:none}.profile-stat-button{display:block;text-align:left}
 
 .creator-metrics{margin-top:6px;color:#536c40;font:10px var(--mono)}
+
+
+/* Keep dataset removal controls visible and reachable on narrow screens. */
+.category-remove-list{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:2px 0 12px}
+.category-remove-label{font-size:10px;color:#747b6f;margin-right:2px}
+.category-remove{display:inline-flex;align-items:center;gap:5px;max-width:190px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#596150;padding:5px 8px;font-size:10px;cursor:pointer}
+.category-remove span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.category-remove span:first-child{font-size:14px;line-height:12px;color:#a56a5a}
+.category-remove:hover{border-color:#d9ada0;background:#fff7f3;color:#873e2d}
+.data-table .row-action-col{position:sticky;left:0;z-index:3;width:38px;min-width:38px;max-width:38px;padding:0;text-align:center;background:#fff!important}
+.data-table thead .row-action-col{z-index:5}
+.data-table .time-col{position:sticky;left:38px;z-index:2;width:125px;min-width:125px;background:#fafbf8!important}
+.data-table thead .time-col{z-index:4}
+.row-remove{display:inline-grid;place-items:center;width:27px;height:27px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#8b6157;font-size:14px;cursor:pointer}
+.row-remove:hover{border-color:#d9ada0;background:#fff2ee;color:#a94e35}
